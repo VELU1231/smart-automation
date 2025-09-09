@@ -1,0 +1,180 @@
+{
+  "name": "Lead Nurturing Sequence",
+  "nodes": [
+    {
+      "parameters": {
+        "triggerTimes": {
+          "item": [
+            {
+              "hour": 9,
+              "minute": 0
+            }
+          ]
+        }
+      },
+      "id": "trigger-daily",
+      "name": "Daily Check",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "table": "contacts",
+        "where": {
+          "conditions": [
+            {
+              "column": "follow_up_sent",
+              "operation": "equal",
+              "value": "false"
+            },
+            {
+              "column": "created_at",
+              "operation": "dateAfter",
+              "value": "{{ $now.minus({ days: 3 }).toISODate() }}"
+            }
+          ]
+        }
+      },
+      "id": "get-leads",
+      "name": "Get New Leads",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 1,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.length }}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "check-leads",
+      "name": "Has New Leads?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.email }}",
+        "subject": "Your Smart Automation Journey Starts Here",
+        "emailFormat": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n    <style>\n        body { font-family: Arial, sans-serif; }\n        .container { max-width: 600px; margin: 0 auto; padding: 20px; }\n        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }\n        .content { padding: 30px; }\n        .cta-button { background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; }\n        .feature { background-color: #f9f9f9; padding: 15px; margin: 15px 0; border-radius: 6px; }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>Ready to Transform Your Business?</h1>\n            <p>Let's explore how automation can save you time and increase efficiency</p>\n        </div>\n        <div class=\"content\">\n            <p>Hi {{ $json.name }},</p>\n            \n            <p>I hope this email finds you well! A few days ago, you expressed interest in Smart Automation, and I wanted to follow up with some valuable insights that could help streamline your business operations.</p>\n            \n            <div class=\"feature\">\n                <h3>🚀 Quick Win: Automate Your Lead Follow-ups</h3>\n                <p>Did you know that businesses that follow up within 1 hour are 7x more likely to qualify leads? Our automation workflows can help you respond instantly to every inquiry.</p>\n            </div>\n            \n            <div class=\"feature\">\n                <h3>📊 Track Everything Automatically</h3>\n                <p>Stop manually updating spreadsheets. Our system automatically captures, organizes, and tracks all your leads and customer interactions.</p>\n            </div>\n            \n            <div class=\"feature\">\n                <h3>⏰ Save 10+ Hours per Week</h3>\n                <p>Our clients typically save 10-15 hours per week on manual tasks, allowing them to focus on growing their business instead of managing it.</p>\n            </div>\n            \n            <p>I'd love to show you how this could work specifically for your business. Would you be interested in a quick 15-minute demo this week?</p>\n            \n            <a href=\"#\" class=\"cta-button\">Schedule Your Free Demo</a>\n            \n            <p>No pressure, no sales pitch – just a friendly conversation about how automation could help you achieve your business goals.</p>\n            \n            <p>Best regards,<br>\n            Alex from Smart Automation</p>\n            \n            <p><small>P.S. If you're not interested in learning more, just reply with \"STOP\" and I'll make sure you don't receive any more emails from us.</small></p>\n        </div>\n    </div>\n</body>\n</html>"
+      },
+      "id": "send-follow-up",
+      "name": "Send Follow-up Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "table": "contacts",
+        "updateKey": "email",
+        "columnsUi": {
+          "columnToMatchOn": "email",
+          "valueToMatchOn": "={{ $json.email }}",
+          "columns": [
+            {
+              "column": "follow_up_sent",
+              "value": "true"
+            },
+            {
+              "column": "follow_up_date",
+              "value": "={{ $now.toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "update-status",
+      "name": "Mark Follow-up Sent",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Daily Check": {
+      "main": [
+        [
+          {
+            "node": "Get New Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get New Leads": {
+      "main": [
+        [
+          {
+            "node": "Has New Leads?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has New Leads?": {
+      "main": [
+        [
+          {
+            "node": "Send Follow-up Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Follow-up Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Follow-up Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "timezone": "UTC"
+  },
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z",
+  "id": "2",
+  "tags": [
+    {
+      "createdAt": "2024-01-01T00:00:00.000Z",
+      "updatedAt": "2024-01-01T00:00:00.000Z",
+      "id": "2",
+      "name": "lead-nurturing"
+    }
+  ]
+}
