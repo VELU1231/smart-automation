@@ -1,0 +1,24 @@
+{
+  "name": "smart-automation",
+  "version": "1.0.0",
+  "description": "A client-ready website template with built-in automation workflows powered by n8n",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p build && cp -r *.md *.html *.css *.js build/ 2>/dev/null || echo 'Building static content...' && echo '<!DOCTYPE html><html><head><title>Smart Automation</title></head><body><h1>Smart Automation</h1><p>A client-ready website template with built-in automation workflows powered by n8n. Designed to help businesses capture leads, automate follow-ups, and grow smarter.</p></body></html>' > build/index.html",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VELU1231/smart-automation.git"
+  },
+  "keywords": [
+    "automation",
+    "n8n",
+    "website-template",
+    "static-site"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {},
+  "dependencies": {}
+}
