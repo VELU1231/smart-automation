@@ -1,0 +1,52 @@
+{
+  "name": "smart-automation-landing-page",
+  "version": "1.0.0",
+  "description": "A client-ready website template with built-in automation workflows powered by n8n",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve . --port 8000",
+    "dev": "npx live-server --port=8000 --open=/",
+    "n8n:start": "docker compose up -d",
+    "n8n:stop": "docker compose down",
+    "n8n:logs": "docker compose logs -f n8n",
+    "n8n:restart": "docker compose restart n8n",
+    "setup": "./setup.sh",
+    "build": "echo 'No build process needed - static HTML/CSS/JS'",
+    "test": "echo 'Tests: Manual testing of form submission and n8n workflows'",
+    "deploy:dev": "docker compose up -d && npm start",
+    "deploy:prod": "docker compose --profile production up -d"
+  },
+  "keywords": [
+    "automation",
+    "n8n",
+    "landing-page",
+    "contact-form",
+    "docker",
+    "workflows",
+    "lead-capture",
+    "business-automation"
+  ],
+  "author": "Smart Automation Team",
+  "license": "MIT",
+  "homepage": "https://github.com/VELU1231/smart-automation#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VELU1231/smart-automation.git"
+  },
+  "bugs": {
+    "url": "https://github.com/VELU1231/smart-automation/issues"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2",
+    "serve": "^14.2.1"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
